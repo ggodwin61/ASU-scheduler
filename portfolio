@@ -35,17 +35,17 @@ public class ASUscheduler {
             i++;
         }
 
-        int row = 0;
-        while (row < students.length) {
-            System.out.print(students[row][0] + " ");
-            System.out.print(students[row][1] + " ");
-            System.out.print(students[row][2] + " ");
-            System.out.print(students[row][3] + " ");
-            System.out.print(students[row][4] + " ");
-            System.out.print(students[row][5] + " ");
-            System.out.print(students[row][6] + " ");
-            System.out.println(students[row][7]);
-            row++;
+        int i = 0;
+        while (i < students.length) {
+            System.out.print(students[i][0] + " ");
+            System.out.print(students[i][1] + " ");
+            System.out.print(students[i][2] + " ");
+            System.out.print(students[i][3] + " ");
+            System.out.print(students[i][4] + " ");
+            System.out.print(students[i][5] + " ");
+            System.out.print(students[i][6] + " ");
+            System.out.println(students[i][7]);
+            i++;
         }
       
    }
