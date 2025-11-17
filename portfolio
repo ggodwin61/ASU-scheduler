@@ -34,20 +34,12 @@ public class ASUscheduler {
             students[i][7] = part[7];
             i++;
         }
-
-        int i = 0;
-        while (i < students.length) {
-            System.out.print(students[i][0] + " ");
-            System.out.print(students[i][1] + " ");
-            System.out.print(students[i][2] + " ");
-            System.out.print(students[i][3] + " ");
-            System.out.print(students[i][4] + " ");
-            System.out.print(students[i][5] + " ");
-            System.out.print(students[i][6] + " ");
-            System.out.println(students[i][7]);
-            i++;
-        }
-      
+        //print the students
+        /*for(i = 0; i < students.length;i++) {
+            for(int j=0;j<students[i].length;j++)
+               System.out.print(students[i][j]+" ");
+         System.out.println();  */
+         
    }
    
    class Printer {
