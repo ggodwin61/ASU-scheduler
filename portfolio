@@ -3,11 +3,50 @@ import java.io.*;
 import java.text.*;
 
 public class ASUscheduler {
-   public static void main(String[] args) {
+   public static void main(String[] args) throws FileNotFoundExecption {
       Scanner input = new Scanner(System.in);
       File courses = new File(courses.txt);
       File sections = new File(sections.txt);
       File students = new File(students.txt);
+
+      //import students and read file
+      Scanner in1 = new Scanner(infile);
+        int count = 0;
+        while (in1.hasNextLine()) {
+            in1.nextLine();
+            count++;
+        }
+
+        String[][] students = new String[count][8];
+
+        Scanner in2 = new Scanner(infile);
+        int i = 0;
+        while (in2.hasNextLine()) {
+            String line = in2.nextLine();
+            String[] part = line.split(",");
+            students[i][0] = part[0];
+            students[i][1] = part[1];
+            students[i][2] = part[2];
+            students[i][3] = part[3];
+            students[i][4] = part[4];
+            students[i][5] = part[5];
+            students[i][6] = part[6];
+            students[i][7] = part[7];
+            i++;
+        }
+
+        int row = 0;
+        while (row < students.length) {
+            System.out.print(students[row][0] + " ");
+            System.out.print(students[row][1] + " ");
+            System.out.print(students[row][2] + " ");
+            System.out.print(students[row][3] + " ");
+            System.out.print(students[row][4] + " ");
+            System.out.print(students[row][5] + " ");
+            System.out.print(students[row][6] + " ");
+            System.out.println(students[row][7]);
+            row++;
+        }
       
    }
    
