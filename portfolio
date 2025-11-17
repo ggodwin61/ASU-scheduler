@@ -20,6 +20,18 @@ public class ASUscheduler {
       }
       public static viod printSchedule {
          printBanner();
+
+         System.out.println("Students Name: " + student + " (" + studentid + ")");
+         System.out.println("Total Credits: " + credits);
+         System.out.println("Student Class: " + gradelevel);
+         System.out.println():
          
+         System.out.println("============================");
+         System.out.println("Student Schedule            ");
+         System.out.println("----------------------------");
+         System.out.println("List View:                  ");
+         System.out.println("----------------------------");
+        
+
       
    }
