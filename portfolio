@@ -13,9 +13,9 @@ public class ASUscheduler {
    
    class Printer {
       public static void printBanner {
-         System.out.println("============================");
+         System.out.println("****************************");
          System.out.println("    ASU School Scheduler    ");
-         System.out.println("============================");
+         System.out.println("****************************");
          System.out.println();
       }
       public static viod printSchedule {
@@ -26,11 +26,13 @@ public class ASUscheduler {
          System.out.println("Student Class: " + gradelevel);
          System.out.println():
          
-         System.out.println("============================");
          System.out.println("Student Schedule            ");
+         System.out.println();
          System.out.println("----------------------------");
          System.out.println("List View:                  ");
          System.out.println("----------------------------");
+
+         printlistView(
         
 
       
