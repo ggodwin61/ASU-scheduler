@@ -23,15 +23,15 @@ public class ASUscheduler {
         int i = 0;
         while (in2.hasNextLine()) {
             String line = in2.nextLine();
-            String[] part = line.split(",");
-            students[i][0] = part[0];
-            students[i][1] = part[1];
-            students[i][2] = part[2];
-            students[i][3] = part[3];
-            students[i][4] = part[4];
-            students[i][5] = part[5];
-            students[i][6] = part[6];
-            students[i][7] = part[7];
+            String[] info = line.split(",");
+            students[i][0] = info[0];
+            students[i][1] = info[1];
+            students[i][2] = info[2];
+            students[i][3] = info[3];
+            students[i][4] = info[4];
+            students[i][5] = info[5];
+            students[i][6] = info[6];
+            students[i][7] = info[7];
             i++;
         }
         //print the students
@@ -59,11 +59,24 @@ public class ASUscheduler {
          
          System.out.println("Student Schedule            ");
          System.out.println();
+
          System.out.println("----------------------------");
          System.out.println("List View:                  ");
          System.out.println("----------------------------");
+         System.out.println();
+         printList()
+         
+         System.out.println("----------------------------");
+         System.out.println("Week View:                  ");
+         System.out.println("----------------------------");
+         System.out.println();
+         printWeek()
 
-         printlistView(
+         System.out.println("----------------------------");
+         System.out.println("Schedule is Complete!       ");
+         System.out.println("----------------------------");
+
+         
         
 
       
