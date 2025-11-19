@@ -64,20 +64,95 @@ public class ASUscheduler {
          System.out.println("List View:                  ");
          System.out.println("----------------------------");
          System.out.println();
-         printList()
+         printList(schedule, catalog);
          
          System.out.println("----------------------------");
          System.out.println("Week View:                  ");
          System.out.println("----------------------------");
          System.out.println();
-         printWeek()
+         printWeek(ArrayList<schedule, catalog);
 
          System.out.println("----------------------------");
          System.out.println("Schedule is Complete!       ");
          System.out.println("----------------------------");
-
-         
-        
-
-      
    }
+public static void printList(ArrayList<Section> schedule, ArrayList<Course> catalog) {
+
+        if (schedule.size() == 0) {
+            System.out.println("No classes in schedule.");
+            return;
+        }
+
+        for (int i = 0; i < schedule.size(); i++) {
+            Section sec = schedule.get(i);
+
+            // find the course in the catalog
+            Course c = findCourse(catalog, sec.getCourseId());
+            String title = "";
+            int credits = 0;
+
+            if (c != null) {
+                title = c.getTitle();
+                credits = c.getCredits();
+            }
+             System.out.println(sec.getCrn() + " - " +
+                               sec.getCourseId() + " | " +
+                               title + " | " +
+                               sec.getDays() + " " + sec.getStart() + "-" + sec.getEnd() +
+                               " | " + credits + " credits");
+        }
+    }
+
+public static void printWeek(ArrayList<Section> schedule, ArrayList<Course> catalog) {
+
+        char[] days = {'M', 'T', 'W', 'R', 'F'};
+        String[] names = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+
+        for (int d = 0; d < days.length; d++) {
+
+            char targetDay = days[d];
+            String dayName = names[d];
+
+            System.out.println(dayName + ":");
+
+            boolean foundOne = false;
+
+            for (int i = 0; i < schedule.size(); i++) {
+                Section sec = schedule.get(i);
+
+                if (sec.getDays().indexOf(targetDay) != -1) {
+
+                    foundOne = true;
+
+                    Course courseFound = null;
+
+                    for (int j = 0; j < catalog.size(); j++) {
+                        Course c = catalog.get(j);
+
+                        if (c.getCourseId().equals(sec.getCourseId())) {
+                            courseFound = c;
+                        }
+                    }
+
+                    String title = "";
+                    if (courseFound != null) {
+                        title = courseFound.getTitle();
+                    }
+
+                    System.out.println("  " +
+                            sec.getStart() + "-" +
+                            sec.getEnd() + "  " +
+                            sec.getCourseId() + "  " +
+                            title);
+                }
+            }
+
+            if (!foundOne) {
+                System.out.println("  (no classes)");
+            }
+
+            System.out.println();
+        }
+    }
+}
+   
