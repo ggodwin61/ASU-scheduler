@@ -1,106 +1,150 @@
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-   public class ASUscheduler {
-      public static void main(String[] args) {
-         Scanner input = new Scanner(System.in);
+public class ASUscheduler {
+   public static void main(String[] args) {
+      Scanner input = new Scanner(System.in);
          
-         System.out.println("******************************");
-         System.out.println("     ASU School Scheduler     ");
-         System.out.println("******************************");
-         System.out.println();
+      System.out.println("******************************");
+      System.out.println("     ASU School Scheduler     ");
+      System.out.println("******************************");
+      System.out.println();
          
-         System.out.println("Please enter students ID number");
-         String id = input.nextLine();
+      System.out.println("Please enter students ID number");
+      String id = input.nextLine();
          
          //group 3 class restrictors
-         System.out.println("Enter CRN numbers to add classes");
+      System.out.println("Enter CRN numbers to add classes");
+      System.out.println();
+         
+      Printer.printSchedule();
+   }// end of main
+   class Printer {
+         
+      public static void printSchedule() {
+         System.out.println("******************************");
+         System.out.println("       Student Schedule       ");
+         System.out.println("******************************");
+         System.out.println();
+         System.out.println("Student Name: " + getfName + " " + getlName);
+         System.out.println("Student ID: " + getstudentID);
+         System.out.println();
+         System.out.println("******************************");
+         System.out.println("          List View           ");
+         System.out.println("******************************");
          System.out.println();
          
-         Printer.printSchedule();
-      }
-      class Printer {
+         printlistView(sched);
          
-         public static void printSchedule() {
-            System.out.println("******************************");
-            System.out.println("       Student Schedule       ");
-            System.out.println("******************************");
-            System.out.println();
-            System.out.println("Student Name: " + getfName + " " + getlName);
-            System.out.println("Student ID: " + getstudentID);
-            System.out.println();
-            System.out.println("******************************");
-            System.out.println("          List View           ");
-            System.out.println("******************************");
-            System.out.println();
-            //printlistView();
-            System.out.println("******************************");
-            System.out.println("          Week View           ");
-            System.out.println("******************************");
-            System.out.println();
-            //printweekView();
+         System.out.println("******************************");
+         System.out.println("          Week View           ");
+         System.out.println("******************************");
+         System.out.println();
+         
+         printweekView(sched);
+      }//end of printSchedule
+      public static void listView(StudentSchedule sched) {
+         ArrayList<Section> list = sched.getSections();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            System.out.println(s.crn + "   " + s.course + "   " + s.days + "   " + s.time);
          }
-         public static void listView(StudentSchedule sched) {
-            ArrayList<Section> list = sched.getSections();
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               System.out.println(s.crn + "   " + s.course + "   " + s.days + "   " + s.time + " " + s.location);
+      }//end of listView
+      public static void sortLines(ArrayList<String> lines)  {
+         for (int a = 0; a < lines.size() - 1; a++) {
+            for (int b = 0; b < lines.size() - 1 - a; b++) {
+               if (lines.get(b).compareTo(lines.get(b + 1)) > 0) {
+                  String temp = lines.get(b);
+                  lines.set(b, lines.get(b + 1));
+                  lines.set(b + 1, temp);
+               }
             }
          }
-         public static void printWeekView(StudentSchedule sched) {
-            ArrayList<Section> list = sched.getSections();
-
-            // Monday
-            System.out.println("Monday:");
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               if (s.days.contains("M")) {
-                  System.out.println("   " + s.course + " - " + s.time + " " + s.location);
-                  
-               }
+      }//end of sortlines
+   
+    //week view
+      public static void printWeekView(StudentSchedule sched) {
+         ArrayList<Section> list = sched.getSections();
+      
+        //monday
+         ArrayList<String> mondayLines = new ArrayList<String>();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            if (s.days.contains("M")) {
+               String line = s.time + "  " + s.course + "  " + s.location;
+               mondayLines.add(line);
             }
-            System.out.println();
-
-            // Tuesday
-            System.out.println("Tuesday:");
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               if (s.days.contains("T")) {
-                  System.out.println("   " + s.course + " - " + s.time);
-               }
-            }
-            System.out.println();
-
-            // Wednesday
-            System.out.println("Wednesday:");
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               if (s.days.contains("W")) {
-                  System.out.println("   " + s.course + " - " + s.time);
-               }
-            }
-            System.out.println();
-
-            // Thursday
-            System.out.println("Thursday:");
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               if (s.days.contains("R")) {
-                  System.out.println("   " + s.course + " - " + s.time);
-               }
-            }
-            System.out.println();
-
-            // Friday
-            System.out.println("Friday:");
-            for (int i = 0; i < list.size(); i++) {
-               Section s = list.get(i);
-               if (s.days.contains("F")) {
-                  System.out.println("   " + s.course + " - " + s.time);
-               }
-            }
-            System.out.println();
          }
-                  
-      }
-   }
+         sortLines(mondayLines);
+         System.out.println("Monday:");
+         for (int i = 0; i < mondayLines.size(); i++) {
+            System.out.println("   " + mondayLines.get(i));
+         }
+         System.out.println();
+      
+        //tuesday
+         ArrayList<String> tuesdayLines = new ArrayList<String>();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            if (s.days.contains("T")) {
+               String line = s.time + "  " + s.course + "  " + s.location;
+               tuesdayLines.add(line);
+            }
+         }
+         sortLines(tuesdayLines);
+         System.out.println("Tuesday:");
+         for (int i = 0; i < tuesdayLines.size(); i++) {
+            System.out.println("   " + tuesdayLines.get(i));
+         }
+         System.out.println();
+      
+        //wednesday
+         ArrayList<String> wednesdayLines = new ArrayList<String>();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            if (s.days.contains("W")) {
+               String line = s.time + "  " + s.course + "  " + s.location;
+               wednesdayLines.add(line);
+            }
+         }
+         sortLines(wednesdayLines);
+         System.out.println("Wednesday:");
+         for (int i = 0; i < wednesdayLines.size(); i++) {
+            System.out.println("   " + wednesdayLines.get(i));
+         }
+         System.out.println();
+      
+        //thursday
+         ArrayList<String> thursdayLines = new ArrayList<String>();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            if (s.days.contains("R")) {
+               String line = s.time + "  " + s.course + "  " + s.location;
+               thursdayLines.add(line);
+            }
+         }
+         sortLines(thursdayLines);
+         System.out.println("Thursday:");
+         for (int i = 0; i < thursdayLines.size(); i++) {
+            System.out.println("   " + thursdayLines.get(i));
+         }
+         System.out.println();
+      
+        //friday
+         ArrayList<String> fridayLines = new ArrayList<String>();
+         for (int i = 0; i < list.size(); i++) {
+            Section s = list.get(i);
+            if (s.days.contains("F")) {
+               String line = s.time + "  " + s.course + "  " + s.location;
+               fridayLines.add(line);
+            }
+         }
+         sortLines(fridayLines);
+         System.out.println("Friday:");
+         for (int i = 0; i < fridayLines.size(); i++) {
+            System.out.println("   " + fridayLines.get(i));
+         }
+         System.out.println();
+      }//end of weekView
+   }//end of class  printer
+}//end of class asuscheduler
