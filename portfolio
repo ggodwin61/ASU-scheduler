@@ -6,6 +6,10 @@ import java.io.FileNotFoundException;
 public class ASUscheduler {
    public static void main(String[] args) {
       Scanner input = new Scanner(System.in);
+         String[][] people = Student.studentm();
+         String [][] People = Student.studentm();
+         String [][] section = Sections.sectionm();
+         String[][] Courses = Courses.coursem();
          
       System.out.println("******************************");
       System.out.println("     ASU School Scheduler     ");
