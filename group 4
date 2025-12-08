@@ -1,0 +1,139 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+
+
+public class myScheduler {
+
+    public static boolean ConstraintSuite(String[] data) {
+        //PreReq Constraint
+        //CoreReq Constraint
+        //Time Conflict Constraint
+        //Credit Load Constraint
+        //Seat Availability Constraint
+        return true;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        //students
+        Scanner scStudent = new Scanner(new File("Students.txt"));
+        ArrayList<String[]> studentData = new ArrayList<>();
+        while (scStudent.hasNextLine()) {
+            String studentRow = scStudent.nextLine();
+            String[] studentParts = studentRow.split(",");
+            //ID, first , last , classification, credits , preference
+
+            if (studentParts.length == 6) {
+                studentData.add(studentParts);
+            }
+        }
+
+        //sections
+        Scanner scSection = new Scanner(new File("ClassCRN.txt"));
+        ArrayList<String[]> sectionData = new ArrayList<>();
+        while (scSection.hasNextLine()) {
+            String sectionRow = scSection.nextLine();
+            String[] sectionParts = sectionRow.split(",");
+            //CRN, section, instructor, courseID, day/time, location, seats available
+
+            if (sectionParts.length == 7) {
+                sectionData.add(sectionParts);
+            }
+        }
+
+        //courses
+        Scanner scCourses = new Scanner(new File("courses.txt"));
+        ArrayList<String[]> courseData = new ArrayList<>();
+        while (scCourses.hasNextLine()) {
+            String courseRow = scCourses.nextLine();
+            String[] courseParts = courseRow.split(",");//
+
+            if (courseParts.length >= 5) {
+                //5 = courseID, courseName, credits, coursePreReq1, courseArea
+                //6 = courseID, courseName, credits, coursePreReq1, coursePreReq2,courseArea
+                courseData.add(courseParts);
+            }
+        }
+
+
+        //schedule
+        Scanner sc = new Scanner(System.in);
+        ArrayList<String[]> schedule = new ArrayList<>();
+
+        boolean studentFound = false;
+        System.out.println("please enter students ID number:");
+        String stuIDInput = sc.next();
+
+        //searches for student
+        for (int i = 0; i < studentData.size(); i++) {
+            //get Method
+            String[] student = studentData.get(i);
+
+            if (studentData.get(i)[0].equalsIgnoreCase(stuIDInput)) {
+                studentFound = true;
+                System.out.println("\nStudent Found");
+                System.out.println("ID: " + student[0]);
+                System.out.println("First: " + student[1]);
+                System.out.println("Last: "+ student[2]);
+                System.out.println("Class: " + student[3]);
+                System.out.println("Credits: " + student[4]);
+                System.out.println("Preferences: " + student[5]);
+                break;
+            }
+        }
+
+
+        int totalCredits = 0;
+
+        //add class loop
+        System.out.println("Enter CRN numbers to add classes(type DONE to stop):");
+        while (totalCredits < 18) {
+            String crnInput = sc.next();
+            if (crnInput.equalsIgnoreCase("DONE")) {
+                break;
+            }
+
+            boolean crnFound = false;
+            for (int i = 0; i < sectionData.size(); i++) {
+                if (sectionData.get(i)[0].equals(crnInput)) { //check for crn match
+                    crnFound = true;
+                    String courseID = sectionData.get(i)[3];
+                    if (ConstraintSuite(sectionData.get(i))) {
+
+                        //gets courses credit value
+                        for (int j = 0; j < courseData.size(); j++) {
+                            if (courseData.get(j)[0].equals(courseID)) {
+
+                                //adds to totalCredits and adds class to schedule
+                                int credits = Integer.parseInt(courseData.get(j)[2]);
+                                if (totalCredits + credits <= 18) {
+                                    totalCredits += credits;
+                                    schedule.add(sectionData.get(i));
+                                    System.out.println("Added " + courseID + " (" + credits + " credits)");
+                                }
+                                else {
+                                    System.out.println(courseID + " cannot be added, exceeds 18 credits.");
+                                }
+                                break;
+
+                            }
+                        }
+                        break;
+                    }
+                    //class does not work
+                    else  {
+                        System.out.println("Section does not meet constraints.");
+                    }
+                }
+
+
+            }
+            if (!crnFound) { // no crn found
+                System.out.println("CRN not Found");
+            }
+        }
+        for (String[] s : schedule) {
+            System.out.println( s[2] + " " + s[3] + " " + s[4] + " " + s[5]);
+        }
+    }
+}
