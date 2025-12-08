@@ -61,26 +61,32 @@ public class myScheduler {
         ArrayList<String[]> schedule = new ArrayList<>();
 
         boolean studentFound = false;
-        System.out.println("please enter students ID number:");
-        String stuIDInput = sc.next();
+        do {
+            System.out.println("please enter students ID number:");
+            String stuIDInput = sc.next();
 
-        //searches for student
-        for (int i = 0; i < studentData.size(); i++) {
-            //get Method
-            String[] student = studentData.get(i);
+            //searches for student
+            for (int i = 0; i < studentData.size(); i++) {
+                //get Method
+                String[] student = studentData.get(i);
 
-            if (studentData.get(i)[0].equalsIgnoreCase(stuIDInput)) {
-                studentFound = true;
-                System.out.println("\nStudent Found");
-                System.out.println("ID: " + student[0]);
-                System.out.println("First: " + student[1]);
-                System.out.println("Last: "+ student[2]);
-                System.out.println("Class: " + student[3]);
-                System.out.println("Credits: " + student[4]);
-                System.out.println("Preferences: " + student[5]);
-                break;
+                if (studentData.get(i)[0].equalsIgnoreCase(stuIDInput)) {
+                    studentFound = true;
+                    System.out.println("\nStudent Found");
+                    System.out.println("ID: " + student[0]);
+                    System.out.println("First: " + student[1]);
+                    System.out.println("Last: " + student[2]);
+                    System.out.println("Class: " + student[3]);
+                    System.out.println("Credits: " + student[4]);
+                    System.out.println("Preferences: " + student[5]);
+                    break;
+                }
             }
-        }
+            //loops until valid student id used in input
+            if (!studentFound) {
+                System.out.println("Invalid Student ID please try again.");
+            }
+        } while (!studentFound);
 
 
         int totalCredits = 0;
