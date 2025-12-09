@@ -1,0 +1,173 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.FileWriter; // Needed for appending to a file
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class StudentRecords {
+
+    // Store the loaded data in instance variables
+    private String[][] studentsData; // Corresponds to 'people'
+    private String[][] transcriptsData; // Corresponds to 'People'
+    
+    private final String STUDENT_FILE = "Students.txt";
+    private final String TRANSCRIPT_FILE = "STUDENTSTRANSCRIPT.txt";
+
+    /**
+     * Constructor to initialize and load data from files immediately.
+     */
+    public StudentRecords() throws FileNotFoundException {
+        loadStudentData();
+        loadTranscriptData();
+    }
+
+    // --- Private Methods for Loading Data ---
+
+    /**
+     * Loads student data from Students.txt into studentsData[][].
+     */
+    private void loadStudentData() throws FileNotFoundException {
+        File studentFile = new File(STUDENT_FILE);
+        // Determine the number of lines (records)
+        int count = 0;
+        try (Scanner studentScan = new Scanner(studentFile)) {
+            while (studentScan.hasNextLine()) {
+                studentScan.nextLine();
+                count++;
+            }
+        }
+
+        // Initialize and fill the array
+        if (count > 0) {
+            studentsData = new String[count][6];
+            try (Scanner in2 = new Scanner(studentFile)) {
+                for (int i = 0; i < count; i++) {
+                    String line = in2.nextLine();
+                    String[] parts = line.split(",");
+                    // Assuming the line has at least 6 comma-separated values
+                    for (int j = 0; j < Math.min(parts.length, 6); j++) {
+                        studentsData[i][j] = parts[j].trim();
+                    }
+                }
+            }
+        } else {
+            studentsData = new String[0][6];
+        }
+        System.out.println("Loaded " + studentsData.length + " student records.");
+    }
+
+    /**
+     * Loads transcript data from STUDENTSTRANSCRIPT.txt into transcriptsData[][].
+     */
+    private void loadTranscriptData() throws FileNotFoundException {
+        File transcriptFile = new File(TRANSCRIPT_FILE);
+        // Determine the number of lines (records)
+        int count = 0;
+        try (Scanner transcriptScan = new Scanner(transcriptFile)) {
+            while (transcriptScan.hasNextLine()) {
+                transcriptScan.nextLine();
+                count++;
+            }
+        }
+
+        // Initialize and fill the array
+        if (count > 0) {
+            transcriptsData = new String[count][3];
+            try (Scanner in3 = new Scanner(transcriptFile)) {
+                for (int t = 0; t < count; t++) {
+                    String line = in3.nextLine();
+                    String[] parts = line.split(",");
+                    // Assuming the line has at least 3 comma-separated values
+                    for (int r = 0; r < Math.min(parts.length, 3); r++) {
+                        transcriptsData[t][r] = parts[r].trim();
+                    }
+                }
+            }
+        } else {
+            transcriptsData = new String[0][3];
+        }
+        System.out.println("Loaded " + transcriptsData.length + " transcript records.");
+    }
+
+    // --- Public Methods for External Use ---
+
+    /**
+     * 1. Method to update the student transcript file by adding a new course record.
+     * This method appends to the file, ensuring existing data remains.
+     * * @param studentID The ID of the student.
+     * @param courseCode The code of the course taken (e.g., CS101).
+     * @param grade The grade received (e.g., A, B+, etc.).
+     * @return true if the update was successful, false otherwise.
+     */
+    public boolean updateStudentTranscript(String studentID, String courseCode, String grade) {
+        String newRecord = studentID + "," + courseCode + "," + grade + "\n";
+
+        try (FileWriter fw = new FileWriter(TRANSCRIPT_FILE, true); // 'true' enables append mode
+             PrintWriter pw = new PrintWriter(fw)) {
+            
+            pw.print(newRecord);
+            System.out.println("Transcript updated for Student ID: " + studentID + " with course " + courseCode);
+            // Re-load the data to keep the internal array up-to-date
+            loadTranscriptData(); 
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error updating transcript file: " + e.getMessage());
+            return false;
+        } catch (FileNotFoundException e) {
+             // This catch is technically for loadTranscriptData, but good practice.
+            System.err.println("Transcript file not found during update: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 2. Method to get all information from the loaded files.
+     * This returns the two arrays bundled inside a custom object or map.
+     * I'll use an array of Object arrays for simplicity, but a custom class is ideal.
+     * * @return An array containing the loaded data: [0] is studentsData[][], [1] is transcriptsData[][].
+     */
+    public Object[] getAllRecords() {
+        // Return copies to prevent external modification of the internal data
+        return new Object[] { studentsData, transcriptsData };
+    }
+
+    // --- Example Main Method for Testing ---
+    
+    public static void main(String[] args) {
+        try {
+            // Initialize the system, which loads the current data
+            StudentRecords recordsSystem = new StudentRecords();
+            
+            System.out.println("\n--- Current Data Snapshot ---");
+            Object[] allData = recordsSystem.getAllRecords();
+            String[][] students = (String[][]) allData[0];
+            String[][] transcripts = (String[][]) allData[1];
+            
+            // Print a portion of the student data
+            System.out.println("First Student Record: " + (students.length > 0 ? Arrays.toString(students[0]) : "None"));
+            // Print a portion of the transcript data
+            System.out.println("First Transcript Record: " + (transcripts.length > 0 ? Arrays.toString(transcripts[0]) : "None"));
+            
+            System.out.println("\n--- Attempting Transcript Update ---");
+            
+            // Example of using the update method after a semester is completed
+            // Parameters: Student ID, Course Code, Grade
+            boolean success = recordsSystem.updateStudentTranscript("S12345", "MATH201", "B+");
+            
+            if (success) {
+                System.out.println("\n--- Data After Update ---");
+                // Get the updated records
+                transcripts = (String[][]) recordsSystem.getAllRecords()[1];
+                System.out.println("Total transcript records now: " + transcripts.length);
+                // Check the last record to ensure the update worked
+                System.out.println("Last Transcript Record: " + (transcripts.length > 0 ? Arrays.toString(transcripts[transcripts.length - 1]) : "None"));
+            }
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("One or both data files were not found. Please ensure 'Students.txt' and 'STUDENTSTRANSCRIPT.txt' exist in the project root.");
+            e.printStackTrace();
+        }
+    }
+}
