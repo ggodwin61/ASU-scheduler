@@ -1,0 +1,158 @@
+import java.util.ArrayList;
+import java.util.List;
+
+// ----- result object used by all constraints -----
+public class ConstraintResult {
+    private boolean passed;
+    private String message;
+
+    public ConstraintResult(boolean passed, String message) {
+        this.passed = passed;
+        this.message = message;
+    }
+
+    public static ConstraintResult pass() {
+        return new ConstraintResult(true, "OK");
+    }
+
+    public static ConstraintResult fail(String msg) {
+        return new ConstraintResult(false, msg);
+    }
+
+    public boolean passed() {
+        return passed;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
+
+// ----- interface from the slide -----
+interface Constraint {
+    ConstraintResult check(PartialSchedule ps,
+                           Section candidate,
+                           Student s,
+                           Catalog cat);
+}
+
+// ----- individual constraint classes -----
+
+class PrerequisiteConstraint implements Constraint {
+
+    @Override
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+        // each prereq must be in the student's completed courses
+        for (String pre : candidate.getPrerequisites()) {
+            if (!s.getCompletedCourses().contains(pre)) {
+                return ConstraintResult.fail("Missing prerequisite: " + pre);
+            }
+        }
+        return ConstraintResult.pass();
+    }
+}
+
+class CorequisiteConstraint implements Constraint {
+
+    @Override
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+        // co-req must be either already taken OR in the current schedule
+        for (String co : candidate.getCorequisites()) {
+            boolean inSchedule = ps.containsCourse(co);
+            boolean alreadyDone = s.getCompletedCourses().contains(co);
+
+            if (!inSchedule && !alreadyDone) {
+                return ConstraintResult.fail("Missing corequisite: " + co);
+            }
+        }
+        return ConstraintResult.pass();
+    }
+}
+
+class TimeConflictConstraint implements Constraint {
+
+    @Override
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
+        for (Section existing : ps.getSections()) {
+            if (existing.conflictsWith(candidate)) {
+                return ConstraintResult.fail(
+                        "Time conflict with " + existing.getCourseId());
+            }
+        }
+        return ConstraintResult.pass();
+    }
+}
+
+class CreditLoadConstraint implements Constraint {
+
+    private int maxCredits;
+
+    public CreditLoadConstraint(int maxCredits) {
+        this.maxCredits = maxCredits;
+    }
+
+    @Override
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
+        int current = ps.getTotalCredits();
+        int newTotal = current + candidate.getCredits();
+
+        if (newTotal > maxCredits) {
+            return ConstraintResult.fail(
+                    "Credit limit exceeded: " + newTotal + " > " + maxCredits);
+        }
+        return ConstraintResult.pass();
+    }
+}
+
+class SeatAvailabilityConstraint implements Constraint {
+
+    @Override
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
+        if (candidate.getSeatsTaken() >= candidate.getSeatCapacity()) {
+            return ConstraintResult.fail("No seats available.");
+        }
+        return ConstraintResult.pass();
+    }
+}
+
+// ----- runs all constraints at once -----
+
+class ConstraintSuite {
+    private List<Constraint> rules = new ArrayList<>();
+
+    public void addConstraint(Constraint c) {
+        rules.add(c);
+    }
+
+    public ConstraintResult checkAll(PartialSchedule ps,
+                                     Section candidate,
+                                     Student s,
+                                     Catalog cat) {
+
+        for (Constraint c : rules) {
+            ConstraintResult r = c.check(ps, candidate, s, cat);
+            if (!r.passed()) {
+                return r;   // stop on first failure
+            }
+        }
+        return ConstraintResult.pass();
+    }
+}
