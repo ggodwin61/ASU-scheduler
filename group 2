@@ -94,7 +94,7 @@ String a= crnScan.nextLine();
 count++;
 }
 System.out.println(count);
-String [][] section=new String[count][6];
+String [][] section=new String[count][7];
 Scanner in2 = new Scanner(crnfile);
 int i=0;
 while (in2.hasNext())
@@ -107,6 +107,7 @@ section[i][2]=line[2];
 section[i][3]=line[3];
 section[i][4]=line[4];
 section[i][5]=line[5];
+section[i][5]=line[6];
 i++;
 }
 for(i=0;i<section.length;i++)
@@ -128,13 +129,13 @@ System.out.println();
         }
         crnScan.close();
 
-        String[][] section = new String[count][6];
+        String[][] section = new String[count][7];
         Scanner in2 = new Scanner(crnfile);
         int i = 0;
         while (in2.hasNextLine()) {
             String[] row = in2.nextLine().split(",");
             for (int k = 0; k < row.length; k++) row[k] = row[k].trim();
-            for (int k = 0; k < 6 && k < row.length; k++) section[i][k] = row[k];
+            for (int k = 0; k < 7 && k < row.length; k++) section[i][k] = row[k];
             i++;
         }
         in2.close();
