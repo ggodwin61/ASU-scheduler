@@ -1,6 +1,7 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-
+// ----- result object used by all constraints -----
 public class ConstraintResult {
     private boolean passed;
     private String message;
@@ -18,19 +19,33 @@ public class ConstraintResult {
         return new ConstraintResult(false, msg);
     }
 
-    public boolean passed() { return passed; }
-    public String getMessage() { return message; }
+    public boolean passed() {
+        return passed;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
 
-
-public interface Constraint {
-    ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat);
+// ----- interface from the slide -----
+interface Constraint {
+    ConstraintResult check(PartialSchedule ps,
+                           Section candidate,
+                           Student s,
+                           Catalog cat);
 }
 
+// ----- individual constraint classes -----
 
-public class PrerequisiteConstraint implements Constraint {
+class PrerequisiteConstraint implements Constraint {
+
     @Override
-    public ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+        // each prereq must be in the student's completed courses
         for (String pre : candidate.getPrerequisites()) {
             if (!s.getCompletedCourses().contains(pre)) {
                 return ConstraintResult.fail("Missing prerequisite: " + pre);
@@ -40,14 +55,19 @@ public class PrerequisiteConstraint implements Constraint {
     }
 }
 
+class CorequisiteConstraint implements Constraint {
 
-public class CorequisiteConstraint implements Constraint {
     @Override
-    public ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+        // co-req must be either already taken OR in the current schedule
         for (String co : candidate.getCorequisites()) {
-            boolean hasCourse = s.getCompletedCourses().contains(co) ||
-                                ps.containsCourse(co);
-            if (!hasCourse) {
+            boolean inSchedule = ps.containsCourse(co);
+            boolean alreadyDone = s.getCompletedCourses().contains(co);
+
+            if (!inSchedule && !alreadyDone) {
                 return ConstraintResult.fail("Missing corequisite: " + co);
             }
         }
@@ -55,19 +75,26 @@ public class CorequisiteConstraint implements Constraint {
     }
 }
 
-public class TimeConflictConstraint implements Constraint {
+class TimeConflictConstraint implements Constraint {
+
     @Override
-    public ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
         for (Section existing : ps.getSections()) {
             if (existing.conflictsWith(candidate)) {
-                return ConstraintResult.fail("Time conflict with " + existing.getCourseId());
+                return ConstraintResult.fail(
+                        "Time conflict with " + existing.getCourseId());
             }
         }
         return ConstraintResult.pass();
     }
 }
 
-public class CreditLoadConstraint implements Constraint {
+class CreditLoadConstraint implements Constraint {
+
     private int maxCredits;
 
     public CreditLoadConstraint(int maxCredits) {
@@ -75,47 +102,71 @@ public class CreditLoadConstraint implements Constraint {
     }
 
     @Override
-    public ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
-        int total = ps.getTotalCredits() + candidate.getCredits();
-        if (total > maxCredits) {
-            return ConstraintResult.fail("Exceeds credit limit (" + maxCredits + ")");
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
+        int current = ps.getTotalCredits();
+        int newTotal = current + candidate.getCredits();
+
+        if (newTotal > maxCredits) {
+            return ConstraintResult.fail(
+                    "Credit limit exceeded: " + newTotal + " > " + maxCredits);
         }
         return ConstraintResult.pass();
     }
 }
 
-public class SeatAvailabilityConstraint implements Constraint {
+class SeatAvailabilityConstraint implements Constraint {
+
     @Override
-    public ConstraintResult check(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
+    public ConstraintResult check(PartialSchedule ps,
+                                  Section candidate,
+                                  Student s,
+                                  Catalog cat) {
+
         if (candidate.getSeatsTaken() >= candidate.getSeatCapacity()) {
-            return ConstraintResult.fail("No seats available");
+            return ConstraintResult.fail("No seats available.");
         }
         return ConstraintResult.pass();
     }
 }
 
-public class ConstraintSuite {
+// ----- runs all constraints at once -----
+
+class ConstraintSuite {
     private List<Constraint> rules = new ArrayList<>();
 
     public void addConstraint(Constraint c) {
         rules.add(c);
     }
 
-    public ConstraintResult checkAll(PartialSchedule ps, Section candidate, Student s, Catalog cat) {
+    public ConstraintResult checkAll(PartialSchedule ps,
+                                     Section candidate,
+                                     Student s,
+                                     Catalog cat) {
+
         for (Constraint c : rules) {
             ConstraintResult r = c.check(ps, candidate, s, cat);
-            if (!r.passed()) return r;
+            if (!r.passed()) {
+                return r;   // stop on first failure
+            }
         }
         return ConstraintResult.pass();
     }
 }
 
-// placeholders that let your constraint system run.
-// Replace later
+// ----- simple helper / placeholder classes so everything compiles -----
 
 class Student {
     private List<String> completed = new ArrayList<>();
-    public List<String> getCompletedCourses() { return completed; }
+
+    public List<String> getCompletedCourses() {
+        return completed;
+    }
+
+    // you can add methods later if needed
 }
 
 class Section {
@@ -131,30 +182,43 @@ class Section {
     public int getCredits() { return credits; }
     public int getSeatsTaken() { return seatsTaken; }
     public int getSeatCapacity() { return seatCapacity; }
-
     public List<String> getPrerequisites() { return pre; }
     public List<String> getCorequisites() { return co; }
 
-    public boolean conflictsWith(Section other) { return false; } // replace later
+    // placeholder: always "no conflict" for now
+    public boolean conflictsWith(Section other) {
+        return false;
+    }
 }
 
 class PartialSchedule {
     private List<Section> sections = new ArrayList<>();
 
-    public List<Section> getSections() { return sections; }
+    public List<Section> getSections() {
+        return sections;
+    }
 
     public boolean containsCourse(String id) {
         for (Section s : sections) {
-            if (s.getCourseId().equals(id)) return true;
+            if (s.getCourseId() != null && s.getCourseId().equals(id)) {
+                return true;
+            }
         }
         return false;
     }
 
     public int getTotalCredits() {
         int sum = 0;
-        for (Section s : sections) sum += s.getCredits();
+        for (Section s : sections) {
+            sum += s.getCredits();
+        }
         return sum;
     }
 }
+
+// not used yet, but the interface needs it
+class Catalog {
+}
+
 
 
