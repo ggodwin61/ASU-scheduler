@@ -336,6 +336,67 @@ public class ASUscheduler {
    
 
 
+    //Section.java Jada update
+public class Section {
+    String crn;
+    String sectionNum;
+    String instructor;
+    String courseID;
+    String days;     
+    String time;      
+    String location;
+    String seats;
     
-     
+    public Section(String[] row) {
+    this.crn = row[0];
+    this.sectionNum = row[1];
+    this.instructor = row[2];
+    this.courseID = row[3];
 
+    
+    String[] split = row[4].split(" ");
+    this.days = split[0];
+    this.time = split[1];
+
+    this.location = row[5];
+    this.seats = row[6];
+    }
+}
+     
+//StudentSchedule.java Jada Update
+import java.util.ArrayList;
+
+public class StudentSchedule {
+
+    private String fName;
+    private String lName;
+    private String studentID;
+    private ArrayList<Section> sections;
+
+    public StudentSchedule(String fName, String lName, String studentID) {
+        this.fName = fName;
+        this.lName = lName;
+        this.studentID = studentID;
+        this.sections = new ArrayList<>();
+    }
+
+    public String getfName() {
+        return fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
+    public String getStudentID() {
+        return studentID;
+    }
+
+    public ArrayList<Section> getSections() {
+        return sections;
+    }
+
+    public void addSection(Section s) {
+        sections.add(s);
+    }
+}
