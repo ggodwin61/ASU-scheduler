@@ -300,90 +300,35 @@ public class ASUscheduler {
              }
           }
        }//end of sortlines
+
+      private static void printDay(StudentSchedule sched, String dayChar, String dayName) {
+            ArrayList<Section> list = sched.getSections();
+            ArrayList<String> lines = new ArrayList<>();
+
+            for (Section s : list) {
+                if (s.days.contains(dayChar)) {
+                    String line = s.time + "  " + s.courseID + "  " + s.location;
+                    lines.add(line);
+                }
+            }
+
+            sortLines(lines);
+            System.out.println(dayName + ":");
+            for (String line : lines) {
+                System.out.println("   " + line);
+            }
+            System.out.println();
+        }
+
+
    
      //week view
        public static void printWeekView(StudentSchedule sched) {
-          ArrayList<Section> list = sched.getSections();
-      
-         //monday
-          ArrayList<String> mondayLines = new ArrayList<String>();
-          for (int i = 0; i < list.size(); i++) {
-             Section s = list.get(i);
-             if (s.days.contains("M")) {
-                String line = s.time + "  " + s.courseID + "  " + s.location;
-                mondayLines.add(line);
-             }
-          }
-          sortLines(mondayLines);
-          System.out.println("Monday:");
-          for (int i = 0; i < mondayLines.size(); i++) {
-             System.out.println("   " + mondayLines.get(i));
-          }
-          System.out.println();
-      
-         //tuesday
-          ArrayList<String> tuesdayLines = new ArrayList<String>();
-          for (int i = 0; i < list.size(); i++) {
-             Section s = list.get(i);
-             if (s.days.contains("T")) {
-                String line = s.time + "  " + s.courseID + "  " + s.location;
-                tuesdayLines.add(line);
-             }
-          }
-          sortLines(tuesdayLines);
-          System.out.println("Tuesday:");
-          for (int i = 0; i < tuesdayLines.size(); i++) {
-             System.out.println("   " + tuesdayLines.get(i));
-          }
-          System.out.println();
-      
-         //wednesday
-          ArrayList<String> wednesdayLines = new ArrayList<String>();
-          for (int i = 0; i < list.size(); i++) {
-             Section s = list.get(i);
-             if (s.days.contains("W")) {
-                String line = s.time + "  " + s.courseID + "  " + s.location;
-                wednesdayLines.add(line);
-             }
-          }
-          sortLines(wednesdayLines);
-          System.out.println("Wednesday:");
-          for (int i = 0; i < wednesdayLines.size(); i++) {
-             System.out.println("   " + wednesdayLines.get(i));
-          }
-          System.out.println();
-      
-         //thursday
-          ArrayList<String> thursdayLines = new ArrayList<String>();
-          for (int i = 0; i < list.size(); i++) {
-             Section s = list.get(i);
-             if (s.days.contains("R")) {
-                String line = s.time + "  " + s.courseID + "  " + s.location;
-                thursdayLines.add(line);
-             }
-          }
-          sortLines(thursdayLines);
-          System.out.println("Thursday:");
-          for (int i = 0; i < thursdayLines.size(); i++) {
-             System.out.println("   " + thursdayLines.get(i));
-          }
-          System.out.println();
-      
-         //friday
-          ArrayList<String> fridayLines = new ArrayList<String>();
-          for (int i = 0; i < list.size(); i++) {
-             Section s = list.get(i);
-             if (s.days.contains("F")) {
-                String line = s.time + "  " + s.courseID + "  " + s.location;
-                fridayLines.add(line);
-             }
-         }
-          sortLines(fridayLines);
-          System.out.println("Friday:");
-          for (int i = 0; i < fridayLines.size(); i++) {
-             System.out.println("   " + fridayLines.get(i));
-          }
-          System.out.println();
+         printDay(sched, "M", "Monday");
+         printDay(sched, "T", "Tuesday");
+         printDay(sched, "W", "Wednesday");
+         printDay(sched, "R", "Thursday");
+         printDay(sched, "F", "Friday");
        }//end of weekView
     }//end of class  printer
  }//end of class asuscheduler
